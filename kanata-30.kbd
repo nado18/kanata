@@ -1,0 +1,105 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;; https://github.com/argenkiwi/kenkyo/blob/main/kanata/kanata.kbd
+  (deftemplate charmod (char mod)
+    (switch
+      ((key-timing 3 less-than 375)) $char break
+      () (tap-hold-release-timeout 200 500 $char $mod $char) break))
+
+  ;; maps a mod layer to both key1 and key2.
+  ;; intended to be symmetric, e.g. f and j are the index of either hand
+  (deftemplate map2 (key1 key2 layer)
+    (defalias
+      $key1 (t! charmod $key1 (layer-while-held $layer))
+      $key2 (t! charmod $key2 (layer-while-held $layer))))
+
+  ;; assigns unicode entries to aliases of the same name.
+  ;; for example Ã© gets aliased to @Ã©
+  (deftemplate key (unicode)
+    (defalias
+      $unicode (unicode $unicode)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Layer - Basics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defsrc
+    q w e r t   y u i o p
+    a s d f g   h j k l ;
+    z x c v b   n m , . /)
+
+  (deflayer default
+    q  w  e  r  t    y  u  i  o  p
+    a  @s @d f  g    h  j  @k @l ;
+    z  x  c  @v b    @n m  ,  .  /)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Layer - Arrow keys and French accents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (deflayer french+arrows
+    @ë   @ê   @é   @è   XX        Home pgup End  ret  tab
+    @à   @â   @û   @ù   XX        left down up   rght spc
+    @ï   @î   @ç   @ô   XX        bspc pgdn del  XX   XX)
+
+  (t! key ë) (t! key ê) (t! key é) (t! key è)
+  (t! key à) (t! key â) (t! key û) (t! key ù)
+  (t! key ï) (t! key î) (t! key ç) (t! key ô)
+
+  (t! map2 s l french+arrows)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mouse
+;;
+;; pp - play/pause
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (deflayer mouse
+    XX    mlft  XX    XX    XX          @mwl  @mwu  @mwr  mdia  pp
+    XX    XX    XX    mlft  XX          @mlft @mdwn @mup  @mrgt vold
+    XX    XX    XX    XX    XX          XX    @mwd  XX    XX    volu)
+
+  ;; regular mouse movement and clicking
+  (defvar
+    mouse-interval 1
+    mouse-time     250
+    mouse-min      1
+    mouse-max      12)
+  (defalias
+    mup   (movemouse-accel-up    $mouse-interval $mouse-time $mouse-min $mouse-max)
+    mlft  (movemouse-accel-left  $mouse-interval $mouse-time $mouse-min $mouse-max)
+    mrgt  (movemouse-accel-right $mouse-interval $mouse-time $mouse-min $mouse-max)
+    mdwn  (movemouse-accel-down  $mouse-interval $mouse-time $mouse-min $mouse-max))
+
+  ;; mouse wheel
+  (defvar
+    wheel-interval 2
+    wheel-distance 3)
+  (defalias
+    mwu    (mwheel-up    $wheel-interval $wheel-distance)
+    mwd    (mwheel-down  $wheel-interval $wheel-distance)
+    mwl    (mwheel-left  $wheel-interval $wheel-distance)
+    mwr    (mwheel-right $wheel-interval $wheel-distance))
+
+  (t! map2 d k mouse)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mouse wheel
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (deflayer numbers
+    F1  F2  F3  F4  XX    @* 7  8  9  0
+    F5  F6  F7  F8  =     -  4  5  6  .
+    F9  F10 F11 F12 ret   +  1  2  3  /)
+
+  (t! key *)
+
+  (t! map2 n v numbers)
+
