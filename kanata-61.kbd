@@ -1,0 +1,94 @@
+
+(defsrc ;; the fn key is internal to the keyboard and may not be remapped
+    esc   1     2     3     4     5     6     7     8     9     0     -     =     bspc
+    tab   q     w     e     r     t     y     u     i     o     p     lbrc  rbrc  \
+    caps  a     s     d     f     g     h     j     k     l     ;     '     ret
+    lsft  z     x     c     v     b     n     m     ,     .     /     rsft
+    lctl  lmet  lalt              spc               ralt  comp  rctl  ;;fn
+)
+
+(deflayer L0
+    grv   1     2     3     4     5     6     7     8     9     0     -     =     bspc
+    @L2   q     w     e     r     t     y     u     i     o     p     lbrc  rbrc  \
+    @L1   a     s     d     f     g     h     j     k     l     ;     '     ret
+    lsft  z     x     c     v     b     n     m     ,     .     /     rsft
+    lctl  lmet  lalt              spc               @L3   rmet  rctl
+)
+
+(deflayer L1 ;; pp is the "media play/pause" key
+    esc   F1    F2    F3    F4    F5    F6    F7    F8    F9    F10   F11   F12   del
+    XX    XX    XX    XX    XX    XX    @wl   @wu   @wr   XX    pp    vold  volu  mdia
+    XX    XX    XX    mrgt  mlft  XX    @ml   @md   @mu   @mr   XX    XX    XX
+    lsft  XX    XX    XX    XX    XX    XX    @wd   XX    XX    up    XX
+    lctl  XX    XX                mlft              left  down  rght
+)
+
+(deflayer L2
+    esc   F1    F2    F3    F4    F5    F6    F7    F8    F9    F10   F11   F12   del
+    XX    XX    XX    XX    XX    XX    home  pgup  end   XX    XX    XX    XX    XX
+    XX    XX    XX    mrgt  mlft  XX    left  down  up    rght  XX    XX    XX
+    lsft  XX    XX    XX    XX    XX    XX    pgdn  XX    XX    XX    XX
+    lctl  XX    lalt              XX                XX    XX    XX
+)
+
+(deflayer L3
+    XX    XX    XX    XX    XX    XX    XX    XX    XX    XX    XX    XX    XX    XX
+    XX    @ë    @ê    @é    @è    XX    XX    XX    XX    XX    XX    XX    XX    XX
+    XX    @à    @â    @û    @ù    XX    XX    XX    XX    XX    XX    XX    XX
+    lsft  @ï    @î    @ç    @ô    XX    XX    XX    XX    XX    XX    rsft
+    XX    XX    XX                XX                XX    XX    XX
+)
+
+(defalias L1 (layer-while-held L1))
+(defalias L2 (tap-hold 200 200 tab (layer-while-held L2)))
+(defalias L3 (layer-while-held L3))
+
+(defalias
+    ë (fork (unicode ë) (unicode Ë) (rsft lsft))
+    ê (fork (unicode ê) (unicode Ê) (rsft lsft))
+    é (fork (unicode é) (unicode É) (rsft lsft))
+    è (fork (unicode è) (unicode È) (rsft lsft))
+    à (fork (unicode à) (unicode À) (rsft lsft))
+    â (fork (unicode â) (unicode Â) (rsft lsft))
+    û (fork (unicode û) (unicode Û) (rsft lsft))
+    ù (fork (unicode ù) (unicode Ù) (rsft lsft))
+    ï (fork (unicode ï) (unicode Ï) (rsft lsft))
+    î (fork (unicode î) (unicode Î) (rsft lsft))
+    ç (fork (unicode ç) (unicode Ç) (rsft lsft))
+    ô (fork (unicode ô) (unicode Ô) (rsft lsft)))
+
+(defvar
+    mInt1 4
+    mInt2 1
+    mTime 1000
+    mMin  1
+    mMax  16
+    mTrbo (lsft))
+
+(defalias
+    mu (fork
+        (movemouse-accel-up    $mInt1 $mTime $mMin $mMax)
+        (movemouse-accel-up    $mInt2 $mTime $mMin $mMax)
+        $mTrbo)
+    md (fork
+        (movemouse-accel-down  $mInt1 $mTime $mMin $mMax)
+        (movemouse-accel-down  $mInt2 $mTime $mMin $mMax)
+        $mTrbo)
+    ml (fork
+        (movemouse-accel-left  $mInt1 $mTime $mMin $mMax)
+        (movemouse-accel-left  $mInt2 $mTime $mMin $mMax)
+        $mTrbo)
+    mr (fork
+        (movemouse-accel-right $mInt1 $mTime $mMin $mMax)
+        (movemouse-accel-right $mInt2 $mTime $mMin $mMax)
+        $mTrbo))
+
+(defvar
+    wheel-interval 2
+    wheel-distance 3)
+
+(defalias
+    wu (mwheel-up    $wheel-interval $wheel-distance)
+    wd (mwheel-down  $wheel-interval $wheel-distance)
+    wl (mwheel-left  $wheel-interval $wheel-distance)
+    wr (mwheel-right $wheel-interval $wheel-distance))
